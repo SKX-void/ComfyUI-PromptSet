@@ -31,7 +31,7 @@ class PromptSetNode:
                 "prompt_pairs": ("STRING", {"default": '"key1":"value1","key2":"value2"', "multiline": True}),
             },
             "optional": {
-                "*": ("BOOLEAN", {"default": False, "forceInput": True})
+
             },
             "hidden": {"node_id": "UNIQUE_ID"}
         }
@@ -52,18 +52,11 @@ class PromptSetNode:
         return ("",)
 
 
-# 注册节点
-NODE_CLASS_MAPPINGS = {
-    "PromptSet": PromptSetNode
-}
 
-NODE_DISPLAY_NAME_MAPPINGS = {
-    "PromptSet": "提示词集"
-}
 
 routes = PromptServer.instance.routes
 
-@routes.post("/custom_nodes/prompt_selector/update_output")
+@routes.post("/custom_nodes/prompt_set/update_output")
 async def update_output(request):
     data = await request.json()
     node_id = data.get("node_id")

@@ -1,11 +1,9 @@
-// prompt_selector/js/prompt_selector.js
+// PromptSet/js/prompt_set.js
 import { app } from "../../scripts/app.js";
-import { api } from "../../scripts/api.js";
-
 app.registerExtension({
-    name: "Comfy.PromptSet",
+    name: "Comfy.PromptSetNode",
     async beforeRegisterNodeDef(nodeType, nodeData, app) {
-        if (nodeData.name !== "PromptSet") {
+        if (nodeData.name !== "PromptSetNode") {
             return;
         }
 
@@ -41,7 +39,6 @@ app.registerExtension({
             }
         };
 
-
         nodeType.prototype.onConfigure = function () {
             // 👇 新增：优先从 widgets_values 获取 prompt_pairs 和 toggle 状态
             if (this.widgets_values && this.widgets_values.length > 0) {
@@ -57,19 +54,17 @@ app.registerExtension({
                         this.widgets.splice(i, 1);
                     }
                 }
-
                 // 添加新的 toggle 控件并恢复状态
                 keys.forEach((key, index) => {
                     const enabled = booleanValues[index] ?? false;
                     const widget = this.addWidget("toggle", `enable_${key}`, enabled, () => {
                         updateOutputAndSendToBackend(this); // 控件变化时触发更新
                     });
-                    widget.label = `启用 ${key}`;
+                    widget.label = `${key}`;
                     widget.isDynamicToggle = true;
                 });
 
                 updateOutputAndSendToBackend(this); // 初始化输出
-                this.setDirtyCanvas(true, true);
             } else {
                 // 👇 原有逻辑保持不变
                 const promptWidget = this.widgets.find(w => w.name === "prompt_pairs");
@@ -77,7 +72,6 @@ app.registerExtension({
                     const keys = parsePromptPairs(promptWidget.value);
                     updateToggleWidgets(this, keys);
                     updateOutputAndSendToBackend(this);
-                    this.setDirtyCanvas(true, true);
                 }
             }
         };
@@ -86,28 +80,30 @@ app.registerExtension({
 
 // 动态创建或更新 toggle 开关控件
 function updateToggleWidgets(node, keys) {
+    const booleans = new Map();
+    for(let i = 1; i < node.widgets.length; i++){
+        booleans.set(node.widgets[i]["name"], node.widgets[i]["value"]);
+    }
     // 清理所有标记为 isDynamicToggle 的控件
-    for (let i = node.widgets.length - 1; i >= 0; i--) {
-        const widget = node.widgets[i];
-        if (widget.isDynamicToggle) {
-            node.widgets.splice(i, 1);
-        }
+    for (let i = node.widgets.length - 1; i > 0; i--) {
+        node.widgets.splice(i, 1);
     }
 
     // 添加新的控件
     keys.forEach(key => {
-        const widget = node.addWidget("toggle", `enable_${key}`, false, () => {
+        const widget = node.addWidget("toggle", `enable_${key}`, booleans.get(`enable_${key}`) ?? true, () => {
             updateOutputAndSendToBackend(node); // 控件变化时触发更新
         });
-        widget.label = `启用 ${key}`;
+        widget.label = `${key}`;
         widget.isDynamicToggle = true;
     });
+    updateOutputAndSendToBackend(node); // 控件变化时触发更新
 }
 
 // 解析 prompt_pairs 字符串获取 keys
 function parsePromptPairs(text) {
     if (!text?.trim()) {
-        return ["key1"];
+        return ["None"];
     }
 
     try {
@@ -127,10 +123,10 @@ function parsePromptPairs(text) {
             }
         }
 
-        return keys.length > 0 ? keys : ["key1"];
+        return keys.length > 0 ? keys : ["None"];
     } catch (error) {
         console.error("解析提示词对时出错:", error);
-        return ["key1"];
+        return ["None"];
     }
 }
 
@@ -151,7 +147,7 @@ function updateOutputAndSendToBackend(node) {
         })
         .map(key => promptDict[key]);
 
-    const outputString = enabledValues.join(",");
+    const outputString = enabledValues.join(",")+",";
     sendOutputToBackend(node.id, outputString);
 }
 
@@ -170,7 +166,7 @@ function parsePromptPairsToObject(text) {
 
 // 发送到后端 API
 function sendOutputToBackend(nodeId, output) {
-    fetch("/custom_nodes/prompt_selector/update_output", {
+    fetch("/custom_nodes/prompt_set/update_output", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ node_id: nodeId, output: output })

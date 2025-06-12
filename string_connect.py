@@ -1,0 +1,37 @@
+# 文件: custom_nodes/ComfyUI-DynamicStringInputNode/dynamic_string_input_node.py
+
+class StringConnectNode:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                # "STRING_0": ("STRING",),
+            },
+            "optional": {
+            }
+        }
+
+    RETURN_TYPES = ("STRING",)
+    FUNCTION = "process"
+    CATEGORY = "Prompt Set"
+
+    def process(self, **kwargs):
+        print(kwargs)
+        # 提取所有 input_x 的值
+        # raw_values = [kwargs.get(f"input_{i}") for i in range(count)]
+
+        # 清理并过滤无效值
+        cleaned_values = []
+        for k,v in kwargs.items():
+            if v is None:
+                continue
+            v = v.strip()
+            if v == "" or v == ",":
+                continue
+            cleaned_values.append(v)
+
+        # 拼接结果
+        result = ",".join(cleaned_values)
+
+        return (result,)
+
