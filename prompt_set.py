@@ -40,7 +40,7 @@ class PromptSetNode:
     FUNCTION = "process"
     CATEGORY = "Prompt Set"
 
-    def process(self, prompt_pairs: str, node_id):
+    def process(self, prompt_pairs: str, node_id,**kwargs):
         # 尝试从全局状态中获取缓存的输出
         node_id=int(node_id)
         if node_id in node_outputs:
@@ -64,7 +64,7 @@ async def update_output(request):
 
     if node_id is not None:
         node_outputs[node_id] = output
-        return web.json_response({"status": "success"})
+        return web.json_response({"status": "success","node_id":node_id,"output":output})
     else:
         return web.json_response({"status": "error", "message": "Missing node_id"}, status=400)
 

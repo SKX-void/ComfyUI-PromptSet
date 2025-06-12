@@ -146,7 +146,6 @@ function updateOutputAndSendToBackend(node) {
             return widget && widget.value === true;
         })
         .map(key => promptDict[key]);
-
     const outputString = enabledValues.join(",")+",";
     sendOutputToBackend(node.id, outputString);
 }
@@ -154,15 +153,65 @@ function updateOutputAndSendToBackend(node) {
 // 辅助函数：将 prompt_pairs 转换为对象
 function parsePromptPairsToObject(text) {
     const result = {};
-    const pairs = text.replace(/\n/g, "").split(",").filter(Boolean);
-    for (const pair of pairs) {
-        if (pair.includes('":"')) {
-            const [key, value] = pair.split('":"').map(part => part.trim().replace(/^"|"$/g, ""));
-            result[key] = value;
+
+    function extractPairs(text) {
+        const result = [];
+        let index = 0;
+        while (index < text.length) {
+            // 找到 ":" 的位置
+            const colonIndex = text.indexOf(':', index);
+            if (colonIndex === -1) break;
+
+            // 向左找第 2 个 "
+            let leftQuoteCount = 0;
+            let leftBound = colonIndex;
+            while (leftBound >= 0) {
+                if (text[leftBound] === '\"') {
+                    leftQuoteCount++;
+                    if (leftQuoteCount === 2) break;
+                }
+                leftBound--;
+            }
+
+            // 如果没找到两个双引号，跳过这个冒号
+            if (leftQuoteCount < 2) {
+                index = colonIndex + 1;
+                continue;
+            }
+
+            // 向右找第 2 个 "
+            let rightQuoteCount = 0;
+            let rightBound = colonIndex;
+            while (rightBound < text.length) {
+                if (text[rightBound] === '\"') {
+                    rightQuoteCount++;
+                    if (rightQuoteCount === 2) break;
+                }
+                rightBound++;
+            }
+
+            // 如果没找到两个双引号，跳过这个冒号
+            if (rightQuoteCount < 2) {
+                index = colonIndex + 1;
+                continue;
+            }
+            const pair = [text.slice(leftBound + 1, colonIndex-1), text.slice(colonIndex + 2, rightBound)]
+            // 截取键值对
+            result.push(pair);
+            // 下一个搜索起点：当前键值对结束位置后一位
+            index = rightBound + 1;
         }
+
+        return result;
+    }
+
+    const pairs = extractPairs(text);
+    for (const pair of pairs) {
+        result[pair[0]] = pair[1];
     }
     return result;
 }
+
 
 // 发送到后端 API
 function sendOutputToBackend(nodeId, output) {

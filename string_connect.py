@@ -32,6 +32,8 @@ class StringConnectNode:
 
         # 拼接结果
         result = ",".join(cleaned_values)
+        if result[-1]!= ",":
+            result += ","
 
         return (result,)
 
