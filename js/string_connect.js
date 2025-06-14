@@ -14,30 +14,41 @@ app.registerExtension({
             if (onNodeCreated) {
                 onNodeCreated.apply(this, arguments);
             }
-            this.addInput(`STRING_0`,"STRING");
-        };
-        const onConnectionsChange = function(type, index, connected, link_info) {
-            // 只处理输入连接变化
+            // 初始化加载阶段开始
+            this._loading = true;
 
-            if (type === 1) {
-                const inputs = this.inputs
-                for (let i = inputs.length-1; i >=0 ; i--) {
-                    inputs[i]["name"]=`STRING_${i}`;
-                    if (inputs[i]["link"] == null) {
-                        inputs.splice(i, 1);
+            this.addInput(`STRING_0`, "STRING");
+
+            // 初始化加载阶段结束
+            this._loading = false;
+        };
+        const onConnectionsChange = function(...args) {
+            const lineOut = args[0];
+            const aimedSlot = args[1];
+            const connectMode = args[2];
+            if(lineOut !== 1)return;
+            if (connectMode){
+                for (let i = this.inputs.length; i < aimedSlot+1; i++){
+                    this.addInput(`STRING_${i}`, "STRING");
+                }
+            }else{
+                for (let i = this.inputs.length-1; i >=0 ; i--) {
+                    if (this.inputs[i]["link"] == null) {
+                        this.inputs.splice(i, 1);
                     }else{
                         break;
                     }
                 }
-                this.addInput(`STRING_${inputs.length}`,"STRING");
             }
         };
         const origOnConnectionsChange = nodeType.prototype.onConnectionsChange;
         nodeType.prototype.onConnectionsChange = function(...args) {
+
             if (origOnConnectionsChange) {
                 origOnConnectionsChange.apply(this, args);
             }
             onConnectionsChange.apply(this, args);
         };
+
     }
 });

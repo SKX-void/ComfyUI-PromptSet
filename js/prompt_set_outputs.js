@@ -56,6 +56,25 @@ function updateOutputs(node, keys) {
             j++;
         }
     }
+    // 1. 先断开所有输出连接
+    for (let i = 0; i < node.outputs.length; i++) {
+        const output = node.outputs[i];
+        if (output && Array.isArray(output.links)) {
+            for (let j = output.links.length - 1; j >= 0; j--) {
+                if(!output.links){
+                    console.warn(`links is null`);
+                    continue;
+                }
+                const linkId = output.links[j];
+                if (!node.graph) continue;
+
+                const link = node.graph._links.get(linkId);
+                if (link) {
+                    node.disconnectOutput(i);
+                }
+            }
+        }
+    }
     // 清理旧控件
     for (let i = node.outputs.length - 1; i >= 0; i--) {
         if (i < node.outputs.length) {
