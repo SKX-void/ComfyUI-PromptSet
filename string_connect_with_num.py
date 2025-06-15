@@ -1,11 +1,11 @@
 # 文件: custom_nodes/ComfyUI-DynamicStringInputNode/dynamic_string_input_node.py
 
-class StringConnectNode:
+class StringConnectWithNumNode:
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                # "STRING_0": ("STRING",),
+                "connect num": ("INT",{'default':1}),
             },
             "optional": {
             }

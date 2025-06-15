@@ -21,6 +21,7 @@ app.registerExtension({
 
             // 初始化加载阶段结束
             this._loading = false;
+            this._debugNum=0;
         };
         const onConnectionsChange = function(...args) {
             const lineOut = args[0];
@@ -32,7 +33,7 @@ app.registerExtension({
                     this.addInput(`STRING_${i}`, "STRING");
                 }
             }else{
-                for (let i = this.inputs.length-1; i >=0 ; i--) {
+                for (let i = this.inputs.length-1; i >0 ; i--) {
                     if (this.inputs[i]["link"] == null) {
                         this.inputs.splice(i, 1);
                     }else{
