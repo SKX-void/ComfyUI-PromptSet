@@ -24,6 +24,8 @@ class StringConnectWithNumNode:
         for k,v in kwargs.items():
             if v is None:
                 continue
+            if type(v) is int:
+                continue
             v = v.strip()
             if v == "" or v == ",":
                 continue

@@ -5,12 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6f5d9f7d-8282-40e8-81b0-828b9cea9a4b" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/js/string_connect_with_num.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/string_connect_with_num.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/string_connect.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/string_connect.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/string_connect.py" beforeDir="false" afterPath="$PROJECT_DIR$/string_connect.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/string_connect_with_num.py" beforeDir="false" afterPath="$PROJECT_DIR$/string_connect_with_num.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,7 +62,7 @@
       <option name="presentableId" value="Default" />
       <updated>1749908155293</updated>
       <workItem from="1749908157705" duration="19000" />
-      <workItem from="1749916480592" duration="9144000" />
+      <workItem from="1749916480592" duration="10614000" />
     </task>
     <servers />
   </component>
