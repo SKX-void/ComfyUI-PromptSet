@@ -70,7 +70,11 @@ function updateOutputs(node, keys) {
 
                 const link = node.graph._links.get(linkId);
                 if (link) {
-                    node.disconnectOutput(i);
+                    try {
+                        node.disconnectOutput(i);
+                    } catch (e) {
+                        console.warn("断开输出连接失败（忽略）", i, e);
+                    }
                 }
             }
         }

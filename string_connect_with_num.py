@@ -33,7 +33,7 @@ class StringConnectWithNumNode:
 
         # 拼接结果
         result = ",".join(cleaned_values)
-        if result[-1]!= ",":
+        if not result.endswith(","):
             result += ","
 
         return (result,)
